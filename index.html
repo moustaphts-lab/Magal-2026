@@ -93,12 +93,20 @@
   }
   .eyebrow{
     font-family:'Inter', sans-serif;
-    letter-spacing:0.28em;
+    letter-spacing:0.35em;
     text-transform:uppercase;
-    font-size:0.68rem;
+    font-size:1.05rem;
     color: var(--gold);
-    opacity:0.85;
+    opacity:0.95;
     margin: 0 0 0.9rem;
+    text-shadow: 0 2px 12px rgba(201,162,75,0.45), 0 0 30px rgba(201,162,75,0.15);
+    font-weight:700;
+    animation: glowPulse 3s ease-in-out infinite alternate;
+  }
+  @keyframes glowPulse{
+    0%{ text-shadow: 0 2px 12px rgba(201,162,75,0.45), 0 0 30px rgba(201,162,75,0.15); opacity:0.95; }
+    50%{ text-shadow: 0 2px 20px rgba(201,162,75,0.65), 0 0 50px rgba(201,162,75,0.35); opacity:1; }
+    100%{ text-shadow: 0 2px 12px rgba(201,162,75,0.45), 0 0 30px rgba(201,162,75,0.15); opacity:0.95; }
   }
   .welcome-line{
     font-family:'Amiri', 'Fraunces', serif;
