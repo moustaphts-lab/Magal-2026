@@ -729,6 +729,45 @@
     transition: opacity .4s ease; opacity:0;
   }
 
+
+  /* ---- COUNTDOWN ---- */
+  .countdown{
+    max-width:560px; margin:2.2rem auto 0; padding:1.4rem 1.2rem 1.2rem;
+    border-radius:28px; position:relative; overflow:hidden;
+  }
+  .cd-title{ margin:0 0 .3rem; font-family:'Amiri','Fraunces',serif; font-weight:700; font-size:1.15rem; color:#fff6dc; }
+  .cd-title .sep{ color:var(--gold); margin:0 .45em; font-weight:400; }
+  .cd-title .lat{ font-family:'Fraunces',serif; font-style:italic; font-weight:500; }
+  .cd-target{ margin:0 0 1.1rem; font-size:.78rem; letter-spacing:.06em; color:var(--gold-soft); }
+  .cd-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:.6rem; direction:ltr; }
+  .cd-unit{
+    border-radius:18px; padding:.85rem .3rem .7rem;
+    background: linear-gradient(160deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
+    border:1px solid rgba(255,255,255,0.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 10px 24px -14px rgba(0,0,0,0.6);
+    position:relative; overflow:hidden;
+  }
+  .cd-unit::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent);
+    pointer-events:none;
+  }
+  .cd-num{
+    display:block; font-family:'Fraunces',serif; font-weight:600;
+    font-size: clamp(1.7rem, 6vw, 2.5rem); line-height:1.1; color:#fff8e4;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 18px rgba(230,205,138,0.45);
+  }
+  .cd-num.tick{ animation: cdTick .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes cdTick{ 0%{ transform: translateY(-30%) scale(.9); opacity:.2; filter:blur(3px);} 100%{ transform:none; opacity:1; filter:none; } }
+  .cd-label{ display:block; margin-top:.35rem; font-family:'Amiri',serif; font-size:.95rem; color:var(--gold-soft); }
+  .cd-label small{ display:block; font-family:'Inter',sans-serif; font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; color:var(--glass-muted); margin-top:.1rem; }
+  .cd-note{ margin:.9rem 0 0; font-size:.7rem; color:var(--glass-muted); opacity:.85; }
+  .cd-done{ font-family:'Amiri',serif; font-size:1.4rem; color:#fff6dc; margin:.4rem 0; }
+  .cd-title{ display:flex; flex-wrap:wrap; justify-content:center; align-items:baseline; row-gap:.1rem; }
+  .cd-title > span:not(.sep){ white-space:nowrap; }
+  @media (max-width:560px){ .cd-label small{ letter-spacing:.04em; font-size:.56rem; } .cd-grid{ gap:.4rem; } .cd-unit{ border-radius:14px; padding:.7rem .2rem .6rem; } .cd-label{ font-size:.85rem; } }
+  @media (prefers-reduced-motion: reduce){ .cd-num.tick{ animation:none; } }
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
     .card, .modal-box, .tabs{ background: rgba(14,40,28,0.92); }
   }
@@ -778,6 +817,18 @@
         18 SAFAR 1448 H
 
   </span>
+
+  <section class="countdown glass" id="countdown" aria-label="Compte à rebours Magal 2027">
+    <p class="cd-title"><span>الماغال القادم</span><span class="sep">·</span><span class="lat">Prochain Magal</span><span class="sep">·</span><span class="lat">Màggal bi ci kanam</span></p>
+    <p class="cd-target">18 SAFAR 1449 H · 23 JUILLET 2027</p>
+    <div class="cd-grid" id="cdGrid">
+      <div class="cd-unit"><span class="cd-num" data-cd="d">--</span><span class="cd-label">يوم<small>Jours · Fan</small></span></div>
+      <div class="cd-unit"><span class="cd-num" data-cd="h">--</span><span class="cd-label">ساعة<small>Heures · Waxtu</small></span></div>
+      <div class="cd-unit"><span class="cd-num" data-cd="m">--</span><span class="cd-label">دقيقة<small>Minutes · Simili</small></span></div>
+      <div class="cd-unit"><span class="cd-num" data-cd="s">--</span><span class="cd-label">ثانية<small>Secondes · Saa</small></span></div>
+    </div>
+    <p class="cd-note">تاريخ تقديري، ويُؤكَّد برؤية الهلال · Date estimée, à confirmer par l'observation du croissant</p>
+  </section>
 </header>
 
 <div class="tab-wrap hidden" id="tabWrap">
@@ -1039,7 +1090,7 @@
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // pointer-following specular light on glass surfaces
-    const glassSel = '.card, .lang-card, .hero-date, .tabs, .modal-box, .wisdom-btn, .mosque-frame, blockquote';
+    const glassSel = '.countdown, .card, .lang-card, .hero-date, .tabs, .modal-box, .wisdom-btn, .mosque-frame, blockquote';
     document.addEventListener('pointermove', (e) => {
       const el = e.target.closest && e.target.closest(glassSel);
       if (el){
@@ -1113,6 +1164,37 @@
     document.querySelectorAll('.tab-btn, .lang-card').forEach(b => b.addEventListener('click', () => {
       setTimeout(() => document.querySelectorAll('.panel.active > .reveal:not(.in)').forEach(el => { io.unobserve(el); io.observe(el); }), 50);
     }));
+  })();
+
+  // ===== Countdown to next Magal (18 Safar 1449 ≈ 23 July 2027, Touba time UTC+0) =====
+  (function(){
+    const target = Date.parse('2027-07-23T00:00:00Z');
+    const els = {}; document.querySelectorAll('[data-cd]').forEach(e => els[e.dataset.cd] = e);
+    const grid = document.getElementById('cdGrid');
+    const prev = {};
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function tick(){
+      let diff = target - Date.now();
+      if (diff <= 0){
+        grid.innerHTML = '<p class="cd-done" style="grid-column:1/-1">جعله الله ماغالًا مباركًا · Màggal bu barke</p>';
+        return clearInterval(timer);
+      }
+      const v = {
+        d: Math.floor(diff/86400000),
+        h: pad(Math.floor(diff/3600000)%24),
+        m: pad(Math.floor(diff/60000)%60),
+        s: pad(Math.floor(diff/1000)%60)
+      };
+      for (const k in v){
+        if (prev[k] !== v[k]){
+          els[k].textContent = v[k];
+          if (prev[k] !== undefined){ els[k].classList.remove('tick'); void els[k].offsetWidth; els[k].classList.add('tick'); }
+          prev[k] = v[k];
+        }
+      }
+    }
+    tick();
+    const timer = setInterval(tick, 1000);
   })();
 </script>
 
